@@ -39,7 +39,7 @@ type Resume interface {
 
 	//Update resume.
 	//If failed return error.
-	Update(resume profile.Resume) error
+	Update(resume profile.Resume) (uuid.UUID, error)
 
 	//Delete resume by resume id.
 	//If failed return error.

@@ -19,8 +19,7 @@ CREATE TABLE resumes
 
     programmer_type varchar(250) not null,
     programmer_level varchar(250) not null,
-    programmer_language varchar(250) not null,
-    extra_skills text
+    programmer_language varchar(250) not null
 );
 
 CREATE TABLE work_experience

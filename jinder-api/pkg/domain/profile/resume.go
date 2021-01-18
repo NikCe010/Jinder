@@ -2,9 +2,7 @@ package profile
 
 import (
 	"Jinder/jinder-api/pkg/domain/profile/shared"
-	"fmt"
 	"github.com/google/uuid"
-	"strings"
 	"time"
 )
 
@@ -14,7 +12,6 @@ type Resume struct {
 	shared.ProgrammerLevel
 	shared.ProgrammerType
 	shared.ProgrammerLanguage
-	ExtraSkills     []string
 	WorkExperiences []WorkExperience //Last 3 places
 }
 
@@ -32,20 +29,4 @@ type WorkExperience struct {
 	From        time.Time
 	To          time.Time
 	Content     string // len = twitters
-}
-
-func (r *Resume) ExtraSkillsToText() string {
-	if len(r.ExtraSkills) <= 0 {
-		return ""
-	}
-
-	var sb strings.Builder
-	if _, err := sb.WriteString("Extra skills:\n"); err != nil {
-		return ""
-	}
-
-	for _, e := range r.ExtraSkills {
-		sb.WriteString(fmt.Sprintf("%s;\n", e))
-	}
-	return sb.String()
 }
