@@ -16,7 +16,7 @@ func NewHandler(services *service.Service) *Handler {
 	return &Handler{services: services}
 }
 
-func (h *Handler) InitRoutes() {
+func (h *Handler) InitRoutes() *mux.Router {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/register", user.RegisterHandler).Methods("POST")
@@ -40,4 +40,6 @@ func (h *Handler) InitRoutes() {
 	u.HandleFunc("/vacancies/{vacancy_id}", vacancy.GetVacancyHandler).Methods("GET")
 	u.HandleFunc("/vacancies/{vacancy_id}", vacancy.UpdateVacancyHandler).Methods("PUT")
 	u.HandleFunc("/vacancies/{vacancy_id}", vacancy.DeleteVacancyHandler).Methods("DELETE")
+
+	return r
 }

@@ -35,7 +35,7 @@ type Resume interface {
 
 	//Create resume.
 	//If failed return error.
-	Create(resume profile.Resume) error
+	Create(resume profile.Resume) (uuid.UUID, error)
 
 	//Update resume.
 	//If failed return error.
@@ -77,7 +77,7 @@ type Repository struct {
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		User:    user.NewPostgres(db),
-		Resume:  resume.NewPostgres(db),
+		Resume:  repository.NewResumePostgres(db),
 		Vacancy: vacancy.NewPostgres(db),
 	}
 }
