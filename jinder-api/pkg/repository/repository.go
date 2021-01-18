@@ -52,16 +52,16 @@ type Vacancy interface {
 	Get(vacancyId uuid.UUID) (profile.Vacancy, error)
 
 	//Get vacancy by user id, page number and count.
-	//Return vacancy and error.
+	//Return slice of vacancy and error.
 	GetWithPaging(userId uuid.UUID, count int, page int) ([]profile.Vacancy, error)
 
 	//Create vacancy.
-	//If failed return error.
-	Create(vacancy profile.Vacancy) error
+	//Return uuid or error.
+	Create(vacancy profile.Vacancy) (uuid.UUID, error)
 
 	//Update vacancy.
-	//If failed return error.
-	Update(vacancy profile.Vacancy) error
+	//Return uuid or error.
+	Update(vacancy profile.Vacancy) (uuid.UUID, error)
 
 	//Delete vacancy by vacancy id.
 	//If failed return error.
@@ -78,6 +78,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		User:    user.NewUserPostgres(db),
 		Resume:  repository.NewResumePostgres(db),
-		Vacancy: vacancy.NewPostgres(db),
+		Vacancy: vacancy.NewVacancyPostgres(db),
 	}
 }

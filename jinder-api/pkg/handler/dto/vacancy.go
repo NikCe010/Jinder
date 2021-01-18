@@ -1,4 +1,4 @@
-package profile
+package dto
 
 import (
 	"Jinder/jinder-api/pkg/domain/profile/shared"
@@ -12,10 +12,16 @@ type Vacancy struct {
 	shared.ProgrammerType
 	shared.ProgrammerLanguage
 	CompanyName   string
-	Team          string
+	Team          Team
 	SalaryFrom    string
 	SalaryTo      string
 	OtherBenefits string
+}
+
+type Team struct {
+	FieldOfActivity
+	Size         int
+	Technologies string
 }
 
 type FieldOfActivity string

@@ -45,7 +45,7 @@ func (p ResumePosgres) GetAll(userId uuid.UUID) ([]profile.Resume, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		resume := new(profile.Resume)
+		var resume profile.Resume
 		err = rows.Scan(
 			&resume.Id,
 			&resume.UserId,
@@ -57,7 +57,7 @@ func (p ResumePosgres) GetAll(userId uuid.UUID) ([]profile.Resume, error) {
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, *resume)
+		users = append(users, resume)
 	}
 
 	return users, nil
