@@ -24,8 +24,9 @@ type Person struct {
 }
 
 type Credentials struct {
-	Email        string
-	PasswordHash string
+	Email                string
+	Password             string
+	PasswordConfirmation string
 }
 
 type Role string

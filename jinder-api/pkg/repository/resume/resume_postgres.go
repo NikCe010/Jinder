@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-type Postgres struct {
+type ResumePosgres struct {
 	db *sqlx.DB
 }
 
-func (p Postgres) Get(resumeId uuid.UUID) (profile.Resume, error) {
+func (p ResumePosgres) Get(resumeId uuid.UUID) (profile.Resume, error) {
 	resume := new(profile.Resume)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -30,7 +30,7 @@ func (p Postgres) Get(resumeId uuid.UUID) (profile.Resume, error) {
 	return *resume, nil
 }
 
-func (p Postgres) GetAll(userId uuid.UUID) ([]profile.Resume, error) {
+func (p ResumePosgres) GetAll(userId uuid.UUID) ([]profile.Resume, error) {
 	users := make([]profile.Resume, 0)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -63,14 +63,13 @@ func (p Postgres) GetAll(userId uuid.UUID) ([]profile.Resume, error) {
 	return users, nil
 }
 
-func (p Postgres) Create(resume profile.Resume) (uuid.UUID, error) {
+func (p ResumePosgres) Create(resume profile.Resume) (uuid.UUID, error) {
 	tx, err := p.db.Begin()
 	if err != nil {
 		return uuid.UUID{}, err
 	}
 	defer tx.Rollback()
 
-	var itemId uuid.UUID
 	createItemQuery := fmt.Sprintf("INSERT INTO %s (id, user_id, programmer_level, programmer_type, "+
 		"programmer_language) VALUES (?,?,?,?,?)", "resumes")
 	stmt, err := tx.Prepare(createItemQuery)
@@ -85,17 +84,16 @@ func (p Postgres) Create(resume profile.Resume) (uuid.UUID, error) {
 		return uuid.UUID{}, err
 	}
 
-	return itemId, tx.Commit()
+	return resume.Id, tx.Commit()
 }
 
-func (p Postgres) Update(resume profile.Resume) (uuid.UUID, error) {
+func (p ResumePosgres) Update(resume profile.Resume) (uuid.UUID, error) {
 	tx, err := p.db.Begin()
 	if err != nil {
 		return uuid.UUID{}, err
 	}
 	defer tx.Rollback()
 
-	var itemId uuid.UUID
 	createItemQuery := fmt.Sprintf("UPDATE %s SET user_id=?, programmer_level=?, programmer_type=?, "+
 		"programmer_language=? WHERE id=?", "resumes")
 	stmt, err := tx.Prepare(createItemQuery)
@@ -110,10 +108,10 @@ func (p Postgres) Update(resume profile.Resume) (uuid.UUID, error) {
 		return uuid.UUID{}, err
 	}
 
-	return itemId, tx.Commit()
+	return resume.Id, tx.Commit()
 }
 
-func (p Postgres) Delete(resumeId uuid.UUID) error {
+func (p ResumePosgres) Delete(resumeId uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -129,6 +127,6 @@ func (p Postgres) Delete(resumeId uuid.UUID) error {
 	return err
 }
 
-func NewResumePostgres(db *sqlx.DB) *Postgres {
-	return &Postgres{db: db}
+func NewResumePostgres(db *sqlx.DB) *ResumePosgres {
+	return &ResumePosgres{db: db}
 }

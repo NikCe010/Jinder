@@ -12,12 +12,12 @@ import (
 
 type User interface {
 	//Register new user.
-	//If failed return error.
-	Register(registration.User) error
+	//Return uuid or error.
+	Register(registration.User) (uuid.UUID, error)
 
 	//Update user.
-	//If failed return error.
-	Update(registration.User) error
+	//Return uuid or error.
+	Update(registration.User) (uuid.UUID, error)
 
 	//Get user by id.
 	//Return user and error.
@@ -30,15 +30,15 @@ type Resume interface {
 	Get(resumeId uuid.UUID) (profile.Resume, error)
 
 	//Get all resumes by user id.
-	//Return slice of resumes (max 10) and error.
+	//Return slice of resumes and error.
 	GetAll(userId uuid.UUID) ([]profile.Resume, error)
 
 	//Create resume.
-	//If failed return error.
+	//Return uuid or error.
 	Create(resume profile.Resume) (uuid.UUID, error)
 
 	//Update resume.
-	//If failed return error.
+	//Return uuid or error.
 	Update(resume profile.Resume) (uuid.UUID, error)
 
 	//Delete resume by resume id.
@@ -76,7 +76,7 @@ type Repository struct {
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		User:    user.NewPostgres(db),
+		User:    user.NewUserPostgres(db),
 		Resume:  repository.NewResumePostgres(db),
 		Vacancy: vacancy.NewPostgres(db),
 	}

@@ -33,7 +33,7 @@ var r = profile.Resume{
 	},
 }
 
-func NewMock() (*sqlx.DB, sqlmock.Sqlmock) {
+func newMock() (*sqlx.DB, sqlmock.Sqlmock) {
 	sqldb, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -42,8 +42,8 @@ func NewMock() (*sqlx.DB, sqlmock.Sqlmock) {
 	return db, mock
 }
 
-func TestPostgres_Create(t *testing.T) {
-	db, mock := NewMock()
+func TestResumePostgres_Create(t *testing.T) {
+	db, mock := newMock()
 
 	repo := NewResumePostgres(db)
 	defer func() {
@@ -54,8 +54,8 @@ func TestPostgres_Create(t *testing.T) {
 		"programmer_language) VALUES (?,?,?,?,?)", "resumes")
 
 	mock.ExpectBegin()
-	prep := mock.ExpectPrepare(query)
-	prep.ExpectExec().
+	mock.ExpectPrepare(query).
+		ExpectExec().
 		WithArgs(r.Id, r.UserId, r.ProgrammerLevel, r.ProgrammerType, r.ProgrammerLanguage).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
@@ -65,8 +65,8 @@ func TestPostgres_Create(t *testing.T) {
 	assert.NotEmpty(t, id)
 }
 
-func TestPostgres_Get(t *testing.T) {
-	db, mock := NewMock()
+func TestResumePostgres_Get(t *testing.T) {
+	db, mock := newMock()
 
 	repo := NewResumePostgres(db)
 	defer func() {
@@ -78,15 +78,17 @@ func TestPostgres_Get(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id", "user_id", "programmer_level", "programmer_type", "programmer_language"}).
 		AddRow(r.Id, r.UserId, r.ProgrammerLevel, r.ProgrammerType, r.ProgrammerLanguage)
 
-	mock.ExpectQuery(query).WithArgs(r.Id).WillReturnRows(rows)
+	mock.ExpectQuery(query).
+		WithArgs(r.Id).
+		WillReturnRows(rows)
 
 	user, err := repo.Get(r.Id)
 	assert.NotNil(t, user)
 	assert.NoError(t, err)
 }
 
-func TestPostgres_GetAll(t *testing.T) {
-	db, mock := NewMock()
+func TestResumePostgres_GetAll(t *testing.T) {
+	db, mock := newMock()
 
 	repo := NewResumePostgres(db)
 	defer func() {
@@ -98,15 +100,17 @@ func TestPostgres_GetAll(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id", "user_id", "programmer_level", "programmer_type", "programmer_language"}).
 		AddRow(r.Id, r.UserId, r.ProgrammerLevel, r.ProgrammerType, r.ProgrammerLanguage)
 
-	mock.ExpectQuery(query).WithArgs(r.UserId).WillReturnRows(rows)
+	mock.ExpectQuery(query).
+		WithArgs(r.UserId).
+		WillReturnRows(rows)
 
 	resume, err := repo.GetAll(r.UserId)
 	assert.NotNil(t, resume)
 	assert.NoError(t, err)
 }
 
-func TestPostgres_Update(t *testing.T) {
-	db, mock := NewMock()
+func TestResumePostgres_Update(t *testing.T) {
+	db, mock := newMock()
 
 	repo := NewResumePostgres(db)
 	defer func() {
@@ -117,8 +121,8 @@ func TestPostgres_Update(t *testing.T) {
 		"programmer_language=? WHERE id=?", "resumes")
 
 	mock.ExpectBegin()
-	prep := mock.ExpectPrepare(query)
-	prep.ExpectExec().
+	mock.ExpectPrepare(query).
+		ExpectExec().
 		WithArgs(r.UserId, r.ProgrammerLevel, r.ProgrammerType, r.ProgrammerLanguage, r.Id).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
@@ -128,8 +132,8 @@ func TestPostgres_Update(t *testing.T) {
 	assert.NotEmpty(t, id)
 }
 
-func TestPostgres_Delete(t *testing.T) {
-	db, mock := NewMock()
+func TestResumePostgres_Delete(t *testing.T) {
+	db, mock := newMock()
 
 	repo := NewResumePostgres(db)
 	defer func() {
@@ -137,8 +141,11 @@ func TestPostgres_Delete(t *testing.T) {
 	}()
 
 	query := fmt.Sprintf("DELETE FROM %s WHERE id=?", "resumes")
-	prep := mock.ExpectPrepare(query)
-	prep.ExpectExec().WithArgs(r.Id).WillReturnResult(sqlmock.NewResult(0, 1))
+
+	mock.ExpectPrepare(query).
+		ExpectExec().
+		WithArgs(r.Id).
+		WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err := repo.Delete(r.Id)
 
