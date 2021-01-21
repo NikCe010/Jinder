@@ -1,7 +1,7 @@
-package profile
+package dto
 
 import (
-	"Jinder/jinder-api/pkg/domain/profile/shared"
+	"Jinder/jinder-api/pkg/service/dto/shared"
 	"github.com/google/uuid"
 )
 

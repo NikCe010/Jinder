@@ -9,7 +9,7 @@ CREATE TABLE users
     email    varchar(250) not null,
     password_hash varchar (250) not null,
 
-    role varchar (250) not null
+    role int not null
 );
 
 CREATE TABLE resumes
@@ -17,9 +17,9 @@ CREATE TABLE resumes
     id       uuid         not null unique,
     user_id uuid references users (id) on delete cascade      not null,
 
-    programmer_type varchar(250) not null,
-    programmer_level varchar(250) not null,
-    programmer_language varchar(250) not null
+    programmer_type int not null,
+    programmer_level int not null,
+    programmer_language int not null
 );
 
 CREATE TABLE work_experience
@@ -37,11 +37,10 @@ CREATE TABLE vacancies
     id       uuid         not null unique,
     user_id uuid references users (id) on delete cascade      not null,
 
-    programmer_type varchar(250) not null,
-    programmer_level varchar(250) not null,
-    programmer_language varchar(250) not null,
+    programmer_type int not null,
+    programmer_level int not null,
+    programmer_language int not null,
     company_name varchar(250),
-    team text,
     salary_from varchar(15) not null,
     salary_to varchar(15) not null,
     extra_benefits varchar(100)

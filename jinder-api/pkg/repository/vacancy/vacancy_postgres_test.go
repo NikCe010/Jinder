@@ -16,10 +16,9 @@ var v = profile.Vacancy{
 	Id:                 uuid.New(),
 	UserId:             uuid.New(),
 	ProgrammerLevel:    shared.Middle,
-	ProgrammerLanguage: shared.Backend,
+	ProgrammerLanguage: shared.Golang,
 	ProgrammerType:     shared.Backend,
 	CompanyName:        "Test Best Company",
-	Team:               "Team of 7 people, project is medical system, stack: ELK, PostgreSQL, MongoDB, AWS",
 	SalaryFrom:         "150000",
 	SalaryTo:           "200000",
 	OtherBenefits:      "Medical Insurance, paid vacation 31 days",
@@ -43,13 +42,13 @@ func TestVacancyPostgres_Create(t *testing.T) {
 	}()
 
 	createItemQuery := fmt.Sprintf("INSERT INTO %s (id, user_id, programmer_level, programmer_language, "+
-		"programmer_type, company_name, team, salary_from, salary_to, extra_benefits) VALUES (?,?,?,?,?,?,?,?,?,?)", "vacancies")
+		"programmer_type, company_name, salary_from, salary_to, extra_benefits) VALUES (?,?,?,?,?,?,?,?,?)", "vacancies")
 
 	mock.ExpectBegin()
 	mock.ExpectPrepare(createItemQuery).
 		ExpectExec().
 		WithArgs(v.Id, v.UserId, v.ProgrammerLevel, v.ProgrammerLanguage, v.ProgrammerType, v.CompanyName,
-			v.Team, v.SalaryFrom, v.SalaryTo, v.OtherBenefits).
+			v.SalaryFrom, v.SalaryTo, v.OtherBenefits).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
 
@@ -68,13 +67,13 @@ func TestVacancyPostgres_Update(t *testing.T) {
 	}()
 
 	updateItemQuery := fmt.Sprintf("UPDATE %s SET user_id=?, programmer_level=?, programmer_language=?, "+
-		"programmer_type=?, company_name=?, team=?, salary_from=?, salary_to=?, extra_benefits=? WHERE id=?", "vacancies")
+		"programmer_type=?, company_name=?, salary_from=?, salary_to=?, extra_benefits=? WHERE id=?", "vacancies")
 
 	mock.ExpectBegin()
 	mock.ExpectPrepare(updateItemQuery).
 		ExpectExec().
 		WithArgs(v.UserId, v.ProgrammerLevel, v.ProgrammerLanguage, v.ProgrammerType, v.CompanyName,
-			v.Team, v.SalaryFrom, v.SalaryTo, v.OtherBenefits, v.Id).
+			v.SalaryFrom, v.SalaryTo, v.OtherBenefits, v.Id).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	mock.ExpectCommit()
 
@@ -93,10 +92,10 @@ func TestVacancyPostgres_Get(t *testing.T) {
 	}()
 
 	getItemQuery := fmt.Sprintf("SELECT id, user_id, programmer_level, programmer_language, "+
-		"programmer_type, company_name, team, salary_from, salary_to, extra_benefits FROM %s WHERE id=?", "vacancies")
+		"programmer_type, company_name, salary_from, salary_to, extra_benefits FROM %s WHERE id=?", "vacancies")
 
-	rows := sqlmock.NewRows([]string{"id", "user_id", "programmer_level", "programmer_language", "programmer_type", "company_name", "team", "salary_from", "salary_to", "extra_benefits"}).
-		AddRow(v.Id, v.UserId, v.ProgrammerLevel, v.ProgrammerLanguage, v.ProgrammerType, v.CompanyName, v.Team, v.SalaryFrom, v.SalaryTo, v.OtherBenefits)
+	rows := sqlmock.NewRows([]string{"id", "user_id", "programmer_level", "programmer_language", "programmer_type", "company_name", "salary_from", "salary_to", "extra_benefits"}).
+		AddRow(v.Id, v.UserId, v.ProgrammerLevel, v.ProgrammerLanguage, v.ProgrammerType, v.CompanyName, v.SalaryFrom, v.SalaryTo, v.OtherBenefits)
 
 	mock.ExpectQuery(getItemQuery).
 		WithArgs(v.Id).
@@ -117,11 +116,11 @@ func TestVacancyPostgres_GetWithPaging(t *testing.T) {
 	}()
 
 	getItemQuery := fmt.Sprintf("SELECT id, user_id, programmer_level, programmer_language, "+
-		"programmer_type, company_name, team, salary_from, salary_to, extra_benefits FROM %s WHERE user_id=?"+
+		"programmer_type, company_name, salary_from, salary_to, extra_benefits FROM %s WHERE user_id=?"+
 		"OFFSET %d LIMIT %d", "vacancies", 0, 10)
 
-	rows := sqlmock.NewRows([]string{"id", "user_id", "programmer_level", "programmer_language", "programmer_type", "company_name", "team", "salary_from", "salary_to", "extra_benefits"}).
-		AddRow(v.Id, v.UserId, v.ProgrammerLevel, v.ProgrammerLanguage, v.ProgrammerType, v.CompanyName, v.Team, v.SalaryFrom, v.SalaryTo, v.OtherBenefits)
+	rows := sqlmock.NewRows([]string{"id", "user_id", "programmer_level", "programmer_language", "programmer_type", "company_name", "salary_from", "salary_to", "extra_benefits"}).
+		AddRow(v.Id, v.UserId, v.ProgrammerLevel, v.ProgrammerLanguage, v.ProgrammerType, v.CompanyName, v.SalaryFrom, v.SalaryTo, v.OtherBenefits)
 
 	mock.ExpectQuery(getItemQuery).
 		WithArgs(v.UserId).

@@ -1,9 +1,8 @@
 package service
 
 import (
-	"Jinder/jinder-api/pkg/domain/profile"
-	"Jinder/jinder-api/pkg/domain/registration"
 	"Jinder/jinder-api/pkg/repository"
+	"Jinder/jinder-api/pkg/service/dto"
 	"Jinder/jinder-api/pkg/service/resume"
 	"Jinder/jinder-api/pkg/service/token_manager"
 	"Jinder/jinder-api/pkg/service/user"
@@ -12,9 +11,9 @@ import (
 )
 
 type User interface {
-	Register(registration.User) error
-	Update(registration.User) error
-	Get(userId uuid.UUID) (registration.User, error)
+	Register(dto.User) (uuid.UUID, error)
+	Update(dto.User) (uuid.UUID, error)
+	Get(userId uuid.UUID) (dto.User, error)
 }
 
 type TokenManager interface {
@@ -24,18 +23,18 @@ type TokenManager interface {
 }
 
 type Resume interface {
-	Get(resumeId uuid.UUID) (profile.Resume, error)
-	GetAll(userId uuid.UUID) ([]profile.Resume, error)
-	Create(resume profile.Resume) error
-	Update(resume profile.Resume) error
+	Get(resumeId uuid.UUID) (dto.Resume, error)
+	GetAll(userId uuid.UUID) ([]dto.Resume, error)
+	Create(resume dto.Resume) (uuid.UUID, error)
+	Update(resume dto.Resume) (uuid.UUID, error)
 	Delete(resumeId uuid.UUID) error
 }
 
 type Vacancy interface {
-	Get(vacancyId uuid.UUID) (profile.Vacancy, error)
-	GetWithPaging(userId uuid.UUID) ([]profile.Vacancy, error)
-	Create(vacancy profile.Vacancy) error
-	Update(vacancy profile.Vacancy) error
+	Get(vacancyId uuid.UUID) (dto.Vacancy, error)
+	GetWithPaging(userId uuid.UUID, count int, offset int) ([]dto.Vacancy, error)
+	Create(vacancy dto.Vacancy) (uuid.UUID, error)
+	Update(vacancy dto.Vacancy) (uuid.UUID, error)
 	Delete(vacancyId uuid.UUID) error
 }
 

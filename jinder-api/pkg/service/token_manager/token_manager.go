@@ -2,21 +2,21 @@ package token_manager
 
 import "github.com/google/uuid"
 
-type Service struct {
+type TokenManagerService struct {
 }
 
-func NewService() *Service {
-	return &Service{}
+func NewService() *TokenManagerService {
+	return &TokenManagerService{}
 }
 
-func (s Service) Generate() (string, error) {
+func (s TokenManagerService) Generate() (string, error) {
 	panic("implement me")
 }
 
-func (s Service) Validate(token string) (bool, error) {
+func (s TokenManagerService) Validate(token string) (bool, error) {
 	panic("implement me")
 }
 
-func (s Service) Parse(token string) (uuid.UUID, error) {
+func (s TokenManagerService) Parse(token string) (uuid.UUID, error) {
 	panic("implement me")
 }

@@ -20,11 +20,11 @@ func (p VacancyPostgres) Get(vacancyId uuid.UUID) (profile.Vacancy, error) {
 	defer cancel()
 
 	getItemQuery := fmt.Sprintf("SELECT id, user_id, programmer_level, programmer_language, "+
-		"programmer_type, company_name, team, salary_from, salary_to, extra_benefits FROM %s WHERE id=?", "vacancies")
+		"programmer_type, company_name, salary_from, salary_to, extra_benefits FROM %s WHERE id=?", "vacancies")
 
 	err := p.db.QueryRowContext(ctx, getItemQuery, vacancyId).
 		Scan(&vacancy.Id, &vacancy.UserId, &vacancy.ProgrammerLevel, &vacancy.ProgrammerLanguage, &vacancy.ProgrammerType,
-			&vacancy.CompanyName, &vacancy.Team, &vacancy.SalaryFrom, &vacancy.SalaryTo, &vacancy.OtherBenefits)
+			&vacancy.CompanyName, &vacancy.SalaryFrom, &vacancy.SalaryTo, &vacancy.OtherBenefits)
 
 	if err != nil {
 		return *vacancy, err
@@ -39,7 +39,7 @@ func (p VacancyPostgres) GetWithPaging(userId uuid.UUID, count int, page int) ([
 	defer cancel()
 
 	getItemsQuery := fmt.Sprintf("SELECT id, user_id, programmer_level, programmer_language, "+
-		"programmer_type, company_name, team, salary_from, salary_to, extra_benefits FROM %s WHERE user_id=?"+
+		"programmer_type, company_name, salary_from, salary_to, extra_benefits FROM %s WHERE user_id=?"+
 		"OFFSET %d LIMIT %d", "vacancies", page*count, count)
 
 	rows, err := p.db.QueryContext(ctx, getItemsQuery, userId)
@@ -56,7 +56,6 @@ func (p VacancyPostgres) GetWithPaging(userId uuid.UUID, count int, page int) ([
 			&vacancy.ProgrammerLanguage,
 			&vacancy.ProgrammerType,
 			&vacancy.CompanyName,
-			&vacancy.Team,
 			&vacancy.SalaryFrom,
 			&vacancy.SalaryTo,
 			&vacancy.OtherBenefits,
@@ -78,14 +77,14 @@ func (p VacancyPostgres) Create(vacancy profile.Vacancy) (uuid.UUID, error) {
 	defer tx.Rollback()
 
 	createItemQuery := fmt.Sprintf("INSERT INTO %s (id, user_id, programmer_level, programmer_language, "+
-		"programmer_type, company_name, team, salary_from, salary_to, extra_benefits) VALUES (?,?,?,?,?,?,?,?,?,?)", "vacancies")
+		"programmer_type, company_name, salary_from, salary_to, extra_benefits) VALUES (?,?,?,?,?,?,?,?,?)", "vacancies")
 
 	stmt, err := tx.Prepare(createItemQuery)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
 	_, err = stmt.Exec(vacancy.Id, vacancy.UserId, vacancy.ProgrammerLevel, vacancy.ProgrammerLanguage, vacancy.ProgrammerType,
-		vacancy.CompanyName, vacancy.Team, vacancy.SalaryFrom, vacancy.SalaryTo, vacancy.OtherBenefits)
+		vacancy.CompanyName, vacancy.SalaryFrom, vacancy.SalaryTo, vacancy.OtherBenefits)
 	defer stmt.Close()
 
 	if err != nil {
@@ -103,14 +102,14 @@ func (p VacancyPostgres) Update(vacancy profile.Vacancy) (uuid.UUID, error) {
 	defer tx.Rollback()
 
 	updateItemQuery := fmt.Sprintf("UPDATE %s SET user_id=?, programmer_level=?, programmer_language=?, "+
-		"programmer_type=?, company_name=?, team=?, salary_from=?, salary_to=?, extra_benefits=? WHERE id=?", "vacancies")
+		"programmer_type=?, company_name=?, salary_from=?, salary_to=?, extra_benefits=? WHERE id=?", "vacancies")
 
 	stmt, err := tx.Prepare(updateItemQuery)
 	if err != nil {
 		return uuid.UUID{}, err
 	}
 	_, err = stmt.Exec(vacancy.UserId, vacancy.ProgrammerLevel, vacancy.ProgrammerLanguage, vacancy.ProgrammerType,
-		vacancy.CompanyName, vacancy.Team, vacancy.SalaryFrom, vacancy.SalaryTo, vacancy.OtherBenefits, vacancy.Id)
+		vacancy.CompanyName, vacancy.SalaryFrom, vacancy.SalaryTo, vacancy.OtherBenefits, vacancy.Id)
 	defer stmt.Close()
 
 	if err != nil {

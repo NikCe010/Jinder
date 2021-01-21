@@ -29,9 +29,9 @@ type Credentials struct {
 	PasswordConfirmation string
 }
 
-type Role string
+type Role int
 
 const (
-	Recruiter  = "Recruiter"
-	Programmer = "Programmer"
+	Recruiter Role = iota
+	Programmer
 )
