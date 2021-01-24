@@ -42,6 +42,9 @@ func (h *Handler) InitRoutes() *mux.Router {
 	}).Methods("GET")
 
 	u := r.PathPrefix("/users/{user_id}").Subrouter()
+	u.Use(h.authorizationMiddleware)
+	u.Use(h.loggingMiddleware)
+
 	u.HandleFunc("/resumes", func(writer http.ResponseWriter, request *http.Request) {
 		h.CreateResumeHandler(writer, request)
 	}).Methods("POST")

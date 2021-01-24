@@ -22,6 +22,8 @@ type User interface {
 	//Get user by id.
 	//Return user and error.
 	Get(userId uuid.UUID) (registration.User, error)
+
+	GetByEmail(email string) (registration.User, error)
 }
 
 type Resume interface {

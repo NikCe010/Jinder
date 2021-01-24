@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Jinder/jinder-api/pkg/service/dto"
+	userDto "Jinder/jinder-api/pkg/service/dto/user"
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -63,7 +64,20 @@ func (h *Handler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SignInHandler(w http.ResponseWriter, r *http.Request) {
+	var user userDto.Login
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
+	token, err := h.Services.TokenManager.Generate(user.Email, user.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	json.NewEncoder(w).Encode(token)
 }
 
 func (h *Handler) SignOutHandler(w http.ResponseWriter, r *http.Request) {

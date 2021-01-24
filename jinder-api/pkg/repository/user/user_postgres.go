@@ -85,6 +85,24 @@ func (p UserPostgres) Get(userId uuid.UUID) (registration.User, error) {
 	return *user, nil
 }
 
+func (p UserPostgres) GetByEmail(email string) (registration.User, error) {
+	user := new(registration.User)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	getQuery := fmt.Sprintf("SELECT id, name, surname, birthday, email, password_hash, role "+
+		"FROM %s WHERE email = $1", "users")
+	err := p.db.QueryRowContext(ctx, getQuery, email).
+		Scan(&user.Id, &user.Name, &user.Surname, &user.Birthday, &user.Email, &user.PasswordHash, &user.Role)
+
+	if err != nil {
+		log.Error(err.Error())
+		return *user, err
+	}
+	return *user, nil
+}
+
 func NewUserPostgres(db *sqlx.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }

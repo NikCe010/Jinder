@@ -17,9 +17,8 @@ type User interface {
 }
 
 type TokenManager interface {
-	Generate() (string, error)
-	Validate(token string) (bool, error)
-	Parse(token string) (uuid.UUID, error)
+	Generate(email, password string) (string, error)
+	Validate(token string) (uuid.UUID, error)
 }
 
 type Resume interface {
@@ -50,6 +49,6 @@ func NewService(repos *repository.Repository) *Service {
 		User:         user.NewService(repos.User),
 		Resume:       resume.NewService(repos.Resume),
 		Vacancy:      vacancy.NewService(repos.Vacancy),
-		TokenManager: token_manager.NewService(),
+		TokenManager: token_manager.NewTokenManagerService(repos.User),
 	}
 }

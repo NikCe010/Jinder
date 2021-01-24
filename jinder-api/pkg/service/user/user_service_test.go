@@ -68,6 +68,22 @@ func (m MockUserRepository) Get(userId uuid.UUID) (registration.User, error) {
 	}, nil
 }
 
+func (m MockUserRepository) GetByEmail(email string) (registration.User, error) {
+	return registration.User{
+		Id: uuid.UUID{},
+		Person: registration.Person{
+			Name:     "Vasya",
+			Surname:  "Vasyliev",
+			Birthday: time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
+		},
+		Credentials: registration.Credentials{
+			Email:        email,
+			PasswordHash: "qwerty123",
+		},
+		Role: registration.Programmer,
+	}, nil
+}
+
 func TestUserService_Register_WithValidData_ShouldCompleteSuccessful(t *testing.T) {
 	service := NewService(MockUserRepository{})
 

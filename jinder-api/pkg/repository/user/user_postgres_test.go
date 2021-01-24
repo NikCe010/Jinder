@@ -84,6 +84,30 @@ func TestUserPostgres_Get(t *testing.T) {
 	assert.NotNil(t, user)
 }
 
+func TestUserPostgres_GetByEmail(t *testing.T) {
+	db, mock := newMock()
+	repo := NewUserPostgres(db)
+
+	db.Begin()
+
+	defer func() {
+		db.Close()
+	}()
+
+	getQuery := fmt.Sprintf("SELECT id, name, surname, birthday, email, password_hash, role "+
+		"FROM %s WHERE email = $1", "users")
+	rows := sqlmock.NewRows([]string{"id", "name", "surname", "birthday", "email", "password_hash", "role"}).
+		AddRow(u.Id, u.Name, u.Surname, u.Birthday, u.Email, u.PasswordHash, u.Role)
+
+	mock.ExpectQuery(getQuery).
+		WithArgs(u.Email).
+		WillReturnRows(rows)
+
+	user, err := repo.GetByEmail(u.Email)
+	assert.NoError(t, err)
+	assert.NotNil(t, user)
+}
+
 func TestUserPostgres_Update(t *testing.T) {
 	db, mock := newMock()
 	repo := NewUserPostgres(db)
