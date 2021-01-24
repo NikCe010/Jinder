@@ -1,4 +1,4 @@
-module Jinder/jinder-api
+module Jinder
 
 go 1.15
 
