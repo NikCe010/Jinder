@@ -4,7 +4,7 @@ CREATE TABLE users
 
     name     varchar(250) not null,
     surname  varchar(250) not null,
-    birthday timestamp default null,
+    birthday timestamp with time zone default null,
 
     email    varchar(250) not null,
     password_hash varchar (250) not null,
@@ -27,9 +27,9 @@ CREATE TABLE work_experience
     id uuid not null unique ,
     resume_id uuid references resumes (id) on delete cascade      not null,
     company_name varchar(100),
-    from timestamp,
-    to timestamp,
-    content varchar(150)
+    experience_from timestamp with time zone,
+    experience_to timestamp with time zone,
+    extra_content varchar(150)
 );
 
 CREATE TABLE vacancies

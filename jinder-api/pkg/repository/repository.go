@@ -3,9 +3,9 @@ package repository
 import (
 	"Jinder/jinder-api/pkg/domain/profile"
 	"Jinder/jinder-api/pkg/domain/registration"
-	"Jinder/jinder-api/pkg/repository/resume"
-	"Jinder/jinder-api/pkg/repository/user"
-	"Jinder/jinder-api/pkg/repository/vacancy"
+	resume "Jinder/jinder-api/pkg/repository/resume"
+	user "Jinder/jinder-api/pkg/repository/user"
+	vacancy "Jinder/jinder-api/pkg/repository/vacancy"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
@@ -31,7 +31,7 @@ type Resume interface {
 
 	//Get all resumes by user id.
 	//Return slice of resumes and error.
-	GetAll(userId uuid.UUID) ([]profile.Resume, error)
+	GetWithPaging(userId uuid.UUID, count int, page int) ([]profile.Resume, error)
 
 	//Create resume.
 	//Return uuid or error.
@@ -68,6 +68,24 @@ type Vacancy interface {
 	Delete(vacancyId uuid.UUID) error
 }
 
+type WorkExperience interface {
+	//Get experience by vacancy id.
+	//Return slice of experience and error.
+	GetExperiences(vacancyId uuid.UUID) ([]profile.WorkExperience, error)
+
+	//Create experience.
+	//Return uuid or error.
+	CreateExperience(experience profile.WorkExperience) (uuid.UUID, error)
+
+	//Update experience.
+	//Return uuid or error.
+	UpdateExperience(experience profile.WorkExperience) (uuid.UUID, error)
+
+	//Delete experience by vacancy id.
+	//If failed return error.
+	DeleteExperience(experienceId uuid.UUID) error
+}
+
 type Repository struct {
 	User
 	Resume
@@ -77,7 +95,7 @@ type Repository struct {
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		User:    user.NewUserPostgres(db),
-		Resume:  repository.NewResumePostgres(db),
+		Resume:  resume.NewResumePostgres(db),
 		Vacancy: vacancy.NewVacancyPostgres(db),
 	}
 }

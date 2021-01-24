@@ -1,4 +1,4 @@
-package user
+package repository
 
 import (
 	"Jinder/jinder-api/pkg/domain/registration"
@@ -45,7 +45,7 @@ func TestUserPostgres_Register(t *testing.T) {
 		db.Close()
 	}()
 
-	registerQuery := fmt.Sprintf("INSERT INTO %s (id, name, surname, birthday, email, password_hash, role) VALUES (?,?,?,?,?,?,?)", "users")
+	registerQuery := fmt.Sprintf("INSERT INTO %s (id, name, surname, birthday, email, password_hash, role) VALUES ($1,$2,$3,$4,$5,$6,$7)", "users")
 
 	mock.ExpectBegin()
 	mock.ExpectPrepare(registerQuery).
@@ -70,7 +70,8 @@ func TestUserPostgres_Get(t *testing.T) {
 		db.Close()
 	}()
 
-	getItemQuery := fmt.Sprintf("SELECT id, name, surname, birthday, email, password_hash, role FROM %s WHERE id = ?", "users")
+	getItemQuery := fmt.Sprintf("SELECT id, name, surname, birthday, email, password_hash, role "+
+		"FROM %s WHERE id = $1", "users")
 	rows := sqlmock.NewRows([]string{"id", "name", "surname", "birthday", "email", "password_hash", "role"}).
 		AddRow(u.Id, u.Name, u.Surname, u.Birthday, u.Email, u.PasswordHash, u.Role)
 
@@ -93,7 +94,7 @@ func TestUserPostgres_Update(t *testing.T) {
 		db.Close()
 	}()
 
-	updateQuery := fmt.Sprintf("UPDATE %s SET name=?, surname=?, birthday=?, email=?, password_hash=?, role=? WHERE id=?", "users")
+	updateQuery := fmt.Sprintf("UPDATE %s SET name=$1, surname=$2, birthday=$3, email=$4, password_hash=$5, role=$6 WHERE id=$7", "users")
 
 	mock.ExpectBegin()
 	mock.ExpectPrepare(updateQuery).

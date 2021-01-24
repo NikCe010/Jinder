@@ -6,6 +6,7 @@ import (
 	"Jinder/jinder-api/pkg/service/dto"
 	"errors"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,38 +21,45 @@ func (s UserService) Register(user dto.User) (uuid.UUID, error) {
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	id, err := s.repo.Register(Mapping(user, string(hash)))
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	return id, nil
 }
 
-func (s UserService) Update(user dto.User) (uuid.UUID, error) {
+func (s UserService) UpdateUser(user dto.User) (uuid.UUID, error) {
 	if user.Password != user.PasswordConfirmation {
-		return uuid.UUID{}, errors.New("passwords are not the same")
+		error := errors.New("passwords are not the same")
+		log.Error(error.Error())
+		return uuid.UUID{}, error
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	id, err := s.repo.Update(Mapping(user, string(hash)))
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	return id, nil
 }
 
-func (s UserService) Get(userId uuid.UUID) (dto.User, error) {
+func (s UserService) GetUser(userId uuid.UUID) (dto.User, error) {
 	user, err := s.repo.Get(userId)
 	if err != nil {
+		log.Error(err.Error())
 		return dto.User{}, err
 	}
 

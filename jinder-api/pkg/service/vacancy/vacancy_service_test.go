@@ -22,7 +22,7 @@ var vacancyDto = dto.Vacancy{
 	CompanyName:        "Test Company",
 	SalaryFrom:         "150000",
 	SalaryTo:           "200000",
-	OtherBenefits:      "Medical Insurance, paid vacation 31 days",
+	ExtraBenefits:      "Medical Insurance, paid vacation 31 days",
 }
 
 var vacancy = profile.Vacancy{
@@ -34,7 +34,7 @@ var vacancy = profile.Vacancy{
 	CompanyName:        "Test Company",
 	SalaryFrom:         "150000",
 	SalaryTo:           "200000",
-	OtherBenefits:      "Medical Insurance, paid vacation 31 days",
+	ExtraBenefits:      "Medical Insurance, paid vacation 31 days",
 }
 
 type MockVacancyRepository struct {
@@ -66,7 +66,7 @@ func (m MockVacancyRepository) Delete(vacancyId uuid.UUID) error {
 func TestVacancyService_Create_ShouldCompleteSuccessful(t *testing.T) {
 	service := NewService(MockVacancyRepository{})
 
-	id, err := service.Create(vacancyDto)
+	id, err := service.CreateVacancy(vacancyDto)
 
 	assert.NoError(t, err)
 	assert.NotEqual(t, id, uuid.UUID{})
@@ -75,7 +75,7 @@ func TestVacancyService_Create_ShouldCompleteSuccessful(t *testing.T) {
 func TestVacancyService_Update_ShouldCompleteSuccessful(t *testing.T) {
 	service := NewService(MockVacancyRepository{})
 
-	id, err := service.Update(vacancyDto)
+	id, err := service.UpdateVacancy(vacancyDto)
 
 	assert.NoError(t, err)
 	assert.NotEqual(t, id, uuid.UUID{})
@@ -84,7 +84,7 @@ func TestVacancyService_Update_ShouldCompleteSuccessful(t *testing.T) {
 func TestVacancyService_Get_ShouldReturnNotEmptyVacancy(t *testing.T) {
 	service := NewService(MockVacancyRepository{})
 
-	result, err := service.Get(vacancyDto.Id)
+	result, err := service.GetVacancy(vacancyDto.Id)
 
 	assert.NoError(t, err)
 	assert.NotEqual(t, result, profile.Vacancy{})
@@ -93,7 +93,7 @@ func TestVacancyService_Get_ShouldReturnNotEmptyVacancy(t *testing.T) {
 func TestVacancyService_GetWithPaging_ShouldReturnOneVacancy(t *testing.T) {
 	service := NewService(MockVacancyRepository{})
 
-	results, err := service.GetWithPaging(vacancyDto.Id, 5, 0)
+	results, err := service.GetVacancies(vacancyDto.Id, 5, 0)
 
 	assert.NoError(t, err)
 	assert.NotEqual(t, results[0], uuid.UUID{})
@@ -103,7 +103,7 @@ func TestVacancyService_GetWithPaging_ShouldReturnOneVacancy(t *testing.T) {
 func TestVacancyService_Delete_ShouldCompleteSuccessful(t *testing.T) {
 	service := NewService(MockVacancyRepository{})
 
-	err := service.Delete(vacancyDto.Id)
+	err := service.DeleteVacancy(vacancyDto.Id)
 
 	assert.NoError(t, err)
 }

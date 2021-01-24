@@ -1,4 +1,4 @@
-package user
+package repository
 
 import (
 	"Jinder/jinder-api/pkg/domain/registration"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -16,20 +17,24 @@ type UserPostgres struct {
 func (p UserPostgres) Register(user registration.User) (uuid.UUID, error) {
 	tx, err := p.db.Begin()
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	defer tx.Rollback()
 
-	createItemQery := fmt.Sprintf("INSERT INTO %s (id, name, surname, birthday, email, password_hash, role) VALUES (?,?,?,?,?,?,?)", "users")
-	stmt, err := tx.Prepare(createItemQery)
+	createItemQuery := fmt.Sprintf("INSERT INTO %s (id, name, surname, birthday, email, password_hash, role) VALUES ($1,$2,$3,$4,$5,$6,$7)", "users")
+	stmt, err := tx.Prepare(createItemQuery)
+
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	defer stmt.Close()
 	_, err = stmt.Exec(user.Id, user.Name, user.Surname, user.Birthday, user.Email, user.PasswordHash, user.Role)
 	if err != nil {
+		log.Error(err.Error())
 		tx.Rollback()
 		return uuid.UUID{}, err
 	}
@@ -39,20 +44,23 @@ func (p UserPostgres) Register(user registration.User) (uuid.UUID, error) {
 func (p UserPostgres) Update(user registration.User) (uuid.UUID, error) {
 	tx, err := p.db.Begin()
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	defer tx.Rollback()
 
-	updateQuery := fmt.Sprintf("UPDATE %s SET name=?, surname=?, birthday=?, email=?, password_hash=?, role=? WHERE id=?", "users")
+	updateQuery := fmt.Sprintf("UPDATE %s SET name=$1, surname=$2, birthday=$3, email=$4, password_hash=$5, role=$6 WHERE id=$7", "users")
 	stmt, err := tx.Prepare(updateQuery)
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	defer stmt.Close()
 	_, err = stmt.Exec(user.Name, user.Surname, user.Birthday, user.Email, user.PasswordHash, user.Role, user.Id)
 	if err != nil {
+		log.Error(err.Error())
 		tx.Rollback()
 		return uuid.UUID{}, err
 	}
@@ -66,11 +74,12 @@ func (p UserPostgres) Get(userId uuid.UUID) (registration.User, error) {
 	defer cancel()
 
 	getQuery := fmt.Sprintf("SELECT id, name, surname, birthday, email, password_hash, role "+
-		"FROM %s WHERE id = ?", "users")
+		"FROM %s WHERE id = $1", "users")
 	err := p.db.QueryRowContext(ctx, getQuery, userId).
 		Scan(&user.Id, &user.Name, &user.Surname, &user.Birthday, &user.Email, &user.PasswordHash, &user.Role)
 
 	if err != nil {
+		log.Error(err.Error())
 		return *user, err
 	}
 	return *user, nil

@@ -7,10 +7,11 @@ import (
 	"Jinder/jinder-api/pkg/service"
 	"context"
 	_ "github.com/lib/pq"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -20,17 +21,24 @@ func main() {
 	}
 	password, ok := os.LookupEnv("DB_PASSWORD")
 
+	Formatter := new(log.TextFormatter)
+	Formatter.TimestampFormat = "02-01-2006 15:04:05"
+	Formatter.FullTimestamp = true
+	log.SetFormatter(Formatter)
+
 	if !ok {
 		log.Fatal("Error while getting db password environment")
 	}
-	db, err := repository.NewPostgresDB(repository.Config{
+	config := repository.Config{
 		Username: viper.GetString("db.username"),
 		Password: password,
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
-	})
+	}
+
+	db, err := repository.NewPostgresDB(config)
 
 	if err != nil {
 		log.Fatal("Database connection error", err)
@@ -43,17 +51,26 @@ func main() {
 	srv := new(jinder.Server)
 	go func() {
 		if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-			logrus.Fatalf("error occured while running http server: %s", err.Error())
+			log.Fatalf("error occured while running http server: %s", err.Error())
 		}
 	}()
 
+	log.Print("Jinder Started")
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+	log.Print("Jinder Shutting Down")
+
 	if err := srv.Shutdown(context.Background()); err != nil {
-		logrus.Errorf("error occured on server shutting down: %s", err.Error())
+		log.Errorf("error occured on server shutting down: %s", err.Error())
 	}
 
 	if err := db.Close(); err != nil {
-		logrus.Errorf("error occured on db connection close: %s", err.Error())
+		log.Errorf("error occured on db connection close: %s", err.Error())
 	}
+
 }
 
 func initConfig() error {

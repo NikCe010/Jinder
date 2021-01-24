@@ -7,12 +7,12 @@ import (
 )
 
 type Resume struct {
-	Id     uuid.UUID
-	UserId uuid.UUID
-	shared.ProgrammerLevel
-	shared.ProgrammerType
-	shared.ProgrammerLanguage
-	WorkExperiences []WorkExperience //Last 3 places
+	Id                        uuid.UUID `db:"id"`
+	UserId                    uuid.UUID `db:"user_id"`
+	shared.ProgrammerLevel    `db:"programmer_level"`
+	shared.ProgrammerType     `db:"programmer_type"`
+	shared.ProgrammerLanguage `db:"programmer_language"`
+	WorkExperiences           []WorkExperience
 }
 
 func NewResume(userId uuid.UUID, programmerLevel shared.ProgrammerLevel, programmerType shared.ProgrammerType,
@@ -22,11 +22,11 @@ func NewResume(userId uuid.UUID, programmerLevel shared.ProgrammerLevel, program
 }
 
 type WorkExperience struct {
-	Id       uuid.UUID
-	ResumeId uuid.UUID
+	Id       uuid.UUID `db:"id"`
+	ResumeId uuid.UUID `db:"resume_id"`
 
-	CompanyName string
-	From        time.Time
-	To          time.Time
-	Content     string // len = twitters
+	CompanyName string    `db:"company_name"`
+	From        time.Time `db:"experience_from"`
+	To          time.Time `db:"experience_to"`
+	Content     string    `db:"content"`
 }

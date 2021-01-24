@@ -56,7 +56,7 @@ func (m MockResumeRepository) Get(resumeId uuid.UUID) (profile.Resume, error) {
 	return resume, nil
 }
 
-func (m MockResumeRepository) GetAll(userId uuid.UUID) ([]profile.Resume, error) {
+func (m MockResumeRepository) GetWithPaging(userId uuid.UUID, count int, page int) ([]profile.Resume, error) {
 	return []profile.Resume{resume}, nil
 }
 
@@ -75,7 +75,7 @@ func (m MockResumeRepository) Delete(resumeId uuid.UUID) error {
 func TestResumeService_Create(t *testing.T) {
 	service := NewService(MockResumeRepository{})
 
-	id, err := service.Create(resumeDto)
+	id, err := service.CreateResume(resumeDto)
 
 	assert.NoError(t, err)
 	assert.NotEqual(t, id, uuid.UUID{})
@@ -84,7 +84,7 @@ func TestResumeService_Create(t *testing.T) {
 func TestResumeService_Get(t *testing.T) {
 	service := NewService(MockResumeRepository{})
 
-	result, err := service.Get(resumeDto.UserId)
+	result, err := service.GetResume(resumeDto.UserId)
 
 	assert.NoError(t, err)
 	assert.Equal(t, result.Id, resume.Id)
@@ -97,7 +97,7 @@ func TestResumeService_Get(t *testing.T) {
 func TestResumeService_GetAll(t *testing.T) {
 	service := NewService(MockResumeRepository{})
 
-	resumes, err := service.GetAll(resumeDto.UserId)
+	resumes, err := service.GetResumes(resumeDto.UserId, 10, 0)
 
 	assert.NoError(t, err)
 	assert.Equal(t, resumes[0].Id, resume.Id)
@@ -110,7 +110,7 @@ func TestResumeService_GetAll(t *testing.T) {
 func TestResumeService_Update(t *testing.T) {
 	service := NewService(MockResumeRepository{})
 
-	id, err := service.Update(resumeDto)
+	id, err := service.UpdateResume(resumeDto)
 
 	assert.NoError(t, err)
 	assert.NotEqual(t, id, uuid.UUID{})
@@ -119,7 +119,7 @@ func TestResumeService_Update(t *testing.T) {
 func TestResumeService_Delete(t *testing.T) {
 	service := NewService(MockResumeRepository{})
 
-	err := service.Delete(resumeDto.Id)
+	err := service.DeleteResume(resumeDto.Id)
 
 	assert.NoError(t, err)
 }

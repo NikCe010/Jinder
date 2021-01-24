@@ -7,24 +7,27 @@ import (
 	"Jinder/jinder-api/pkg/service/dto"
 	"Jinder/jinder-api/pkg/service/dto/shared"
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type VacancyService struct {
 	repo repository.Vacancy
 }
 
-func (s VacancyService) Get(vacancyId uuid.UUID) (dto.Vacancy, error) {
+func (s VacancyService) GetVacancy(vacancyId uuid.UUID) (dto.Vacancy, error) {
 	vacancy, err := s.repo.Get(vacancyId)
 	if err != nil {
+		log.Error(err.Error())
 		return dto.Vacancy{}, err
 	}
 
 	return MappingToDto(vacancy), nil
 }
 
-func (s VacancyService) GetWithPaging(userId uuid.UUID, count int, offset int) ([]dto.Vacancy, error) {
+func (s VacancyService) GetVacancies(userId uuid.UUID, count int, offset int) ([]dto.Vacancy, error) {
 	vacancies, err := s.repo.GetWithPaging(userId, count, offset)
 	if err != nil {
+		log.Error(err.Error())
 		return []dto.Vacancy{}, err
 	}
 
@@ -36,27 +39,30 @@ func (s VacancyService) GetWithPaging(userId uuid.UUID, count int, offset int) (
 	return dtos, nil
 }
 
-func (s VacancyService) Create(vacancy dto.Vacancy) (uuid.UUID, error) {
+func (s VacancyService) CreateVacancy(vacancy dto.Vacancy) (uuid.UUID, error) {
 	id, err := s.repo.Create(Mapping(vacancy))
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	return id, nil
 }
 
-func (s VacancyService) Update(vacancy dto.Vacancy) (uuid.UUID, error) {
+func (s VacancyService) UpdateVacancy(vacancy dto.Vacancy) (uuid.UUID, error) {
 	id, err := s.repo.Update(Mapping(vacancy))
 	if err != nil {
+		log.Error(err.Error())
 		return uuid.UUID{}, err
 	}
 
 	return id, nil
 }
 
-func (s VacancyService) Delete(vacancyId uuid.UUID) error {
+func (s VacancyService) DeleteVacancy(vacancyId uuid.UUID) error {
 	err := s.repo.Delete(vacancyId)
 	if err != nil {
+		log.Error(err.Error())
 		return err
 	}
 
@@ -72,12 +78,12 @@ func Mapping(vacancy dto.Vacancy) profile.Vacancy {
 		Id:                 vacancy.Id,
 		UserId:             vacancy.UserId,
 		ProgrammerLanguage: domain.ProgrammerLanguage(vacancy.ProgrammerLanguage),
-		ProgrammerLevel:    domain.ProgrammerLevel(vacancy.ProgrammerLanguage),
-		ProgrammerType:     domain.ProgrammerType(vacancy.ProgrammerLanguage),
+		ProgrammerLevel:    domain.ProgrammerLevel(vacancy.ProgrammerLevel),
+		ProgrammerType:     domain.ProgrammerType(vacancy.ProgrammerType),
 		CompanyName:        vacancy.CompanyName,
 		SalaryFrom:         vacancy.SalaryFrom,
 		SalaryTo:           vacancy.SalaryTo,
-		OtherBenefits:      vacancy.OtherBenefits,
+		ExtraBenefits:      vacancy.ExtraBenefits,
 	}
 }
 
@@ -86,11 +92,11 @@ func MappingToDto(vacancy profile.Vacancy) dto.Vacancy {
 		Id:                 vacancy.Id,
 		UserId:             vacancy.UserId,
 		ProgrammerLanguage: shared.ProgrammerLanguage(vacancy.ProgrammerLanguage),
-		ProgrammerLevel:    shared.ProgrammerLevel(vacancy.ProgrammerLanguage),
-		ProgrammerType:     shared.ProgrammerType(vacancy.ProgrammerLanguage),
+		ProgrammerLevel:    shared.ProgrammerLevel(vacancy.ProgrammerLevel),
+		ProgrammerType:     shared.ProgrammerType(vacancy.ProgrammerType),
 		CompanyName:        vacancy.CompanyName,
 		SalaryFrom:         vacancy.SalaryFrom,
 		SalaryTo:           vacancy.SalaryTo,
-		OtherBenefits:      vacancy.OtherBenefits,
+		ExtraBenefits:      vacancy.ExtraBenefits,
 	}
 }

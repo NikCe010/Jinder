@@ -89,7 +89,7 @@ func TestUserService_Register_WithWrongPasswordConfirmation_ShouldReturnError(t 
 func TestUserService_Get(t *testing.T) {
 	service := NewService(MockUserRepository{})
 
-	user, err := service.Get(uuid.New())
+	user, err := service.GetUser(uuid.New())
 
 	assert.NoError(t, err)
 	assert.NotNil(t, user)
@@ -98,7 +98,7 @@ func TestUserService_Get(t *testing.T) {
 func TestUserService_Update_WithValidData_ShouldCompleteSuccessful(t *testing.T) {
 	service := NewService(MockUserRepository{})
 
-	user, err := service.Update(userDto)
+	user, err := service.UpdateUser(userDto)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, user)
@@ -107,7 +107,7 @@ func TestUserService_Update_WithValidData_ShouldCompleteSuccessful(t *testing.T)
 func TestUserService_Update_WithWrongPasswordConfirmation_ShouldReturnError(t *testing.T) {
 	service := NewService(MockUserRepository{})
 
-	user, err := service.Update(userDto)
+	user, err := service.UpdateUser(userDto)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, user)

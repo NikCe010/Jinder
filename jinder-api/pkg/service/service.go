@@ -12,8 +12,8 @@ import (
 
 type User interface {
 	Register(dto.User) (uuid.UUID, error)
-	Update(dto.User) (uuid.UUID, error)
-	Get(userId uuid.UUID) (dto.User, error)
+	UpdateUser(dto.User) (uuid.UUID, error)
+	GetUser(userId uuid.UUID) (dto.User, error)
 }
 
 type TokenManager interface {
@@ -23,19 +23,19 @@ type TokenManager interface {
 }
 
 type Resume interface {
-	Get(resumeId uuid.UUID) (dto.Resume, error)
-	GetAll(userId uuid.UUID) ([]dto.Resume, error)
-	Create(resume dto.Resume) (uuid.UUID, error)
-	Update(resume dto.Resume) (uuid.UUID, error)
-	Delete(resumeId uuid.UUID) error
+	GetResume(resumeId uuid.UUID) (dto.Resume, error)
+	GetResumes(userId uuid.UUID, count int, offset int) ([]dto.Resume, error)
+	CreateResume(resume dto.Resume) (uuid.UUID, error)
+	UpdateResume(resume dto.Resume) (uuid.UUID, error)
+	DeleteResume(resumeId uuid.UUID) error
 }
 
 type Vacancy interface {
-	Get(vacancyId uuid.UUID) (dto.Vacancy, error)
-	GetWithPaging(userId uuid.UUID, count int, offset int) ([]dto.Vacancy, error)
-	Create(vacancy dto.Vacancy) (uuid.UUID, error)
-	Update(vacancy dto.Vacancy) (uuid.UUID, error)
-	Delete(vacancyId uuid.UUID) error
+	GetVacancy(vacancyId uuid.UUID) (dto.Vacancy, error)
+	GetVacancies(userId uuid.UUID, count int, offset int) ([]dto.Vacancy, error)
+	CreateVacancy(vacancy dto.Vacancy) (uuid.UUID, error)
+	UpdateVacancy(vacancy dto.Vacancy) (uuid.UUID, error)
+	DeleteVacancy(vacancyId uuid.UUID) error
 }
 
 type Service struct {

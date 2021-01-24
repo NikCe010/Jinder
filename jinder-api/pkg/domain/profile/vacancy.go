@@ -6,15 +6,15 @@ import (
 )
 
 type Vacancy struct {
-	Id     uuid.UUID
-	UserId uuid.UUID
-	shared.ProgrammerLevel
-	shared.ProgrammerType
-	shared.ProgrammerLanguage
-	CompanyName   string
-	SalaryFrom    string
-	SalaryTo      string
-	OtherBenefits string
+	Id                        uuid.UUID `db:"id"`
+	UserId                    uuid.UUID `db:"user_id"`
+	shared.ProgrammerType     `db:"programmer_type"`
+	shared.ProgrammerLevel    `db:"programmer_level"`
+	shared.ProgrammerLanguage `db:"programmer_language"`
+	CompanyName               string `db:"company_name"`
+	SalaryFrom                string `db:"salary_from"`
+	SalaryTo                  string `db:"salary_to"`
+	ExtraBenefits             string `db:"extra_benefits"`
 }
 
 type FieldOfActivity int

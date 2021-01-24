@@ -6,11 +6,11 @@ import (
 )
 
 type User struct {
-	Id uuid.UUID
-	Person
-	Credentials
+	Id          uuid.UUID `json:"id"`
+	Person      `json:"person"`
+	Credentials `json:"credentials"`
 
-	Role
+	Role `json:"role"`
 }
 
 func NewUser(person Person, credentials Credentials, role Role) *User {
@@ -18,15 +18,15 @@ func NewUser(person Person, credentials Credentials, role Role) *User {
 }
 
 type Person struct {
-	Name     string
-	Surname  string
-	Birthday time.Time
+	Name     string    `json:"name"`
+	Surname  string    `json:"surname"`
+	Birthday time.Time `json:"birthday"`
 }
 
 type Credentials struct {
-	Email                string
-	Password             string
-	PasswordConfirmation string
+	Email                string `json:"email"`
+	Password             string `json:"password"`
+	PasswordConfirmation string `json:"password_confirmation"`
 }
 
 type Role int
