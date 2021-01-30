@@ -1,0 +1,167 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service VacancyService {
+  rpc GetVacancy(VacancyId)
+      returns (VacancyDto);
+
+  rpc GetVacancies(GetVacanciesRequest)
+      returns (GetVacanciesResponse);
+
+  rpc CreateVacancy(VacancyDto)
+      returns (VacancyId);
+
+  rpc UpdateVacancy(VacancyDto)
+      returns (VacancyId);
+
+  rpc DeleteVacancy(VacancyId)
+      returns (google.protobuf.Empty);
+
+  rpc ViewVacancy(VacancyId)
+      returns (google.protobuf.Empty);
+}
+
+service ResumeService {
+  rpc GetResume(ResumeId)
+      returns (ResumeDto);
+
+  rpc GetResumes(GetResumesRequest)
+      returns (GetResumesResponse);
+
+  rpc CreateResume(ResumeDto)
+      returns (ResumeId);
+
+  rpc UpdateResume(ResumeDto)
+      returns (ResumeId);
+
+  rpc DeleteResume(ResumeId)
+      returns (google.protobuf.Empty);
+
+  rpc ViewResume(ResumeId)
+      returns (google.protobuf.Empty);
+}
+
+message VacancyDto{
+  string id = 1;
+  string user_id = 2;
+  ProgrammerLevel level = 3;
+  ProgrammerType type = 4;
+  ProgrammerLanguage language = 5;
+  string company_name = 6;
+  string salary_from = 7;
+  string salary_to = 8;
+  string extra_benefits = 9;
+}
+
+message GetVacanciesRequest {
+  string user_id = 1;
+  string count = 2;
+  string offset = 3;
+}
+
+message GetVacanciesResponse {
+  repeated VacancyDto vacancies = 1;
+}
+
+message VacancyId {
+  string content = 1;
+}
+
+
+message ResumeDto{
+  string id = 1;
+  string user_id = 2;
+  ProgrammerLevel level = 3;
+  ProgrammerType type = 4;
+  ProgrammerLanguage language = 5;
+  repeated WorkExp work_experiences = 6;
+}
+
+message GetResumesRequest {
+  string user_id = 1;
+  string count = 2;
+  string offset = 3;
+}
+
+message GetResumesResponse {
+  repeated ResumeDto resumes = 1;
+}
+
+message ResumeId {
+  string content = 1;
+}
+
+message WorkExp {
+  string id = 1;
+  string resume_id = 2;
+  string company_name = 3;
+  google.protobuf.Timestamp from = 4;
+  google.protobuf.Timestamp to = 5;
+  string content = 6;
+}
+
+enum ProgrammerLevel {
+    Entry = 0;
+    Junior = 1;
+    Middle = 2;
+    Senior = 3;
+    Teamlead =4;
+}
+
+enum ProgrammerType {
+    DevOps = 0;
+    Backend = 1;
+    Frontend = 2;
+    Fullstack = 3;
+    Mobile = 4;
+    Embedded = 5;
+    Desktop = 6;
+    GameDev = 7;
+    MachineLearning = 8;
+}
+
+enum ProgrammerLanguage {
+    Python = 0;
+    R = 1;
+
+    Java = 2;
+    Kotlin = 3;
+    Scala = 4;
+    Groovy = 5;
+
+    CSharp = 6;
+    VisualBasic = 7;
+
+    CPlusPlus = 8;
+    C = 9;
+    Rust = 10;
+
+    Assembler = 11;
+
+    PHP = 12;
+
+    JavaScript = 13;
+    TypeScript = 14;
+    Dart = 15;
+
+    Golang = 16;
+
+    Perl = 17;
+
+    Swift = 18;
+    ObjectiveC = 19;
+
+    Sql = 20;
+
+    Ruby = 21;
+    Elixir = 22;
+
+    Lua = 23;
+
+    PowerShell = 24;
+    Bash = 25;
+    Proto = 26;
+    Yaml = 27;
+}

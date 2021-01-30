@@ -1,0 +1,5 @@
+port: "8001"
+
+clients:
+  nats: "nats://localhost:4222"
+  jobs_service: "http://localhost:8000"

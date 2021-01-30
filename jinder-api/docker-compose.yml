@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-  jinder-api:
-    build: ./
-    command: ./jinder-api
-    ports:
-      - 8000:8000
-    depends_on:
-      - db
-    environment:
-      - DB_PASSWORD=qwerty
-
   db:
     restart: always
     image: postgres:latest
@@ -20,3 +10,17 @@ services:
       - POSTGRES_PASSWORD=qwerty
     ports:
       - 5454:5432
+
+  nats:
+    image: 'nats:0.8.0'
+    networks:
+      - nats
+    entrypoint: "/gnatsd -DV"
+    expose:
+      - "4222"
+      - "8222"
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    hostname: nats-server
+    network_mode: "nats"
