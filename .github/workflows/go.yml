@@ -22,6 +22,14 @@ jobs:
     - name: Dependencies 
       working-directory: jinder-api/jobs
       run: go mod download
+      
+    - name: gRPC's protoc action
+      uses: abelfodil/protoc-action@v1
+      with:
+        protoc-version: 3.14.0
+        grpc-version: 1.35.0
+        working-directory: jinder-api/jobs
+        run: protoc --go_out=pkg/handler/grpc --go_opt=paths=source_relative --go-grpc_out=pkg/handler/grpc --go-grpc_opt=paths=source_relative protos/jobs_service.proto
 
     - name: Build
       working-directory: jinder-api/jobs
